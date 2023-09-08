@@ -58,13 +58,13 @@
   
   nudge_space  <-  0.25
   
-  df_linkage %>% 
+ df_linkage %>% 
     mutate(linkage_in_percent = linkage_in_percent/100) %>% 
     rename(period = quarter) %>% 
     ggplot(aes(x = period)) +
-    geom_col(aes(y = number_positive_identified), fill = scooter_light,
+    geom_col(aes(y = number_positive_identified), fill = "#002A6C",
              width = 0.6) +
-    geom_col(aes(y = number_positive_linked), fill = scooter, width = 0.5, 
+    geom_col(aes(y = number_positive_linked), fill = "#BA0C2F", width = 0.5, 
              position = position_nudge(x = nudge_space)) + 
     facet_wrap(~fct_reorder(prime_li_ps, number_positive_identified, sum, na.rm = TRUE,.desc = TRUE),
                nrow = 1) +
@@ -87,9 +87,9 @@
         # subtitle = "subtitle",
          caption = "Source: ")
   
-  si_save("Graphics/01_bar.svg")
+  si_save(glue("Graphics/01_bar_{metadata$curr_pd}.svg"))
   
-  df_linkage %>% 
+ v2 <- df_linkage %>% 
     mutate(linkage_in_percent = linkage_in_percent/100) %>% 
     rename(period = quarter) %>% 
     ggplot(aes(period, linkage_in_percent, group = prime_li_ps,
@@ -106,15 +106,17 @@
     #               size = 10/.pt) +
     # facet_wrap(~funding_agency, nrow = 3) +
     #si_style_nogrid() +
-    scale_y_continuous(labels = percent, limits = c(.5, 1)) +
+    scale_y_continuous(labels = percent, limits = c(.9, 1)) +
     geom_text(aes(label = percent(linkage_in_percent)), color = "white",
               family = "Source Sans Pro",
               size = 12/.pt) +
     expand_limits(y = .2) +
     si_style_ygrid() +
     labs(x = NULL, y = NULL) 
+ 
+ v2 / v1
   
-  si_save("Graphics/01_linkage_pct.svg")
+  si_save(glue("Graphics/01_linkage_pct_{metadata$curr_pd}.svg"))
   
   # TRACING RTT PLOT -------------------------------------------------------------------
   
@@ -128,9 +130,9 @@
     ggplot(aes(x = period)) +
     geom_col(aes(y = line_list_received), fill = trolley_grey_light,
              width = 0.6) +
-    geom_col(aes(y = traced_located), fill = genoa_light, width = 0.5, 
+    geom_col(aes(y = traced_located), fill = "#BA0C2F", width = 0.5, 
              position = position_nudge(x = nudge_space)) + 
-    geom_col(aes(y = re_engaged), fill = genoa, width = 0.5, 
+    geom_col(aes(y = re_engaged), fill = "#002A6C", width = 0.5, 
              position = position_nudge(x = nudge_space*2)) + 
     # facet_wrap(~fct_reorder(prime_li_ps, number_positive_identified, sum, na.rm = TRUE,.desc = TRUE),
     #            nrow = 1) +
@@ -157,7 +159,7 @@
          # subtitle = "subtitle",
          caption = "Source: ")
   
-  si_save("Graphics/02_bar.svg")
+  si_save(glue("Graphics/02_bar_{metadata$curr_pd}.svg"))
 
   df_trace %>% 
     filter(!str_detect(quarter, "FY21")) %>% 
@@ -168,17 +170,17 @@
     ggplot(aes(period)) +
     geom_blank(aes(y = 1.1 * pct_rtt)) +
     geom_line(aes(y = pct_rtt, group = NA,
-                  color = genoa),size = 1.5) +
+                  color = "#002A6C"),size = 1.5) +
     geom_point(aes(y = pct_rtt,
-                   color = genoa, fill = genoa), shape = 21, size = 10, stroke = 2) +
+                   color = "#002A6C", fill = "#002A6C"), shape = 21, size = 10, stroke = 2) +
     geom_text(aes(y = pct_rtt,
                   label = percent(pct_rtt)), color = "white",
               family = "Source Sans Pro",
               size = 12/.pt) +
     geom_line(aes(y = pct_rtt_line_list, group = NA,
-                  color = golden_sand),size = 1.5) +
+                  color = "#A7C6ED"),size = 1.5) +
     geom_point(aes(y = pct_rtt_line_list,
-                   color = golden_sand, fill = golden_sand), shape = 21, size = 10, stroke = 2) +
+                   color = "#A7C6ED", fill = "#A7C6ED"), shape = 21, size = 10, stroke = 2) +
     geom_text(aes(y = pct_rtt_line_list,
                   label = percent(pct_rtt_line_list,1)),
               family = "Source Sans Pro",
@@ -190,6 +192,6 @@
     si_style_ygrid() +
     labs(x = NULL, y = NULL)
     
-  si_save("Graphics/02_traced_rtt.svg")
+  si_save(glue("Graphics/02_traced_rtt_{metadata$curr_pd}.svg"))
   
     
