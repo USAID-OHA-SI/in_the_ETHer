@@ -56,9 +56,11 @@
 
 # LINKAGE PLOT -------------------------------------------------------------------
   
+  #either export these as two svgs an add them together in AI or use v2 / v1
+  
   nudge_space  <-  0.25
   
- df_linkage %>% 
+ v1 <- df_linkage %>% 
     mutate(linkage_in_percent = linkage_in_percent/100) %>% 
     rename(period = quarter) %>% 
     ggplot(aes(x = period)) +
@@ -68,26 +70,19 @@
              position = position_nudge(x = nudge_space)) + 
     facet_wrap(~fct_reorder(prime_li_ps, number_positive_identified, sum, na.rm = TRUE,.desc = TRUE),
                nrow = 1) +
-    #facet_wrap(~prime_li_ps, nrow = 2) +
     si_style_ygrid() +
-    # geom_text(aes(y = number_positive_linked, label = percent(linkage_in_percent, 1)),
-    #           size = 12/.pt, family = "Source Sans Pro SemiBold", vjust = -0.5, hjust = -0.5) +
     geom_text(aes(y = number_positive_identified,
-                  label = number_positive_identified), size = 12/.pt, hjust = 0, 
+                  label = number_positive_identified), size = 12/.pt, hjust = 0.5,
+              vjust = -1,
               family = "Source Sans Pro Light") +
     geom_text(aes(y = number_positive_linked,
-                  label = number_positive_linked), size = 12/.pt, hjust = 0,
+                  label = number_positive_linked), size = 12/.pt, hjust = 0, vjust= -0.5,
               position = position_nudge(x = nudge_space),
-              family = "Source Sans Pro Light") +
-    #scale_y_continuous(position = "right", labels = label_number()) +
-    #theme(strip.text = element_blank()) +
-   # coord_cartesian(expand = F) +
-    labs(x = NULL, y = NULL,
-         title = "Contact tracing and ICT has resulted in a 98.2% linkage rate across LIPs" %>% toupper(),
-        # subtitle = "subtitle",
-         caption = "Source: ")
+              family = "Source Sans Pro Light") + 
+   labs(x = NULL, y = NULL)
+
   
-  si_save(glue("Graphics/01_bar_{metadata$curr_pd}.svg"))
+ # si_save(glue("Graphics/01_bar_{metadata$curr_pd}.svg"))
   
  v2 <- df_linkage %>% 
     mutate(linkage_in_percent = linkage_in_percent/100) %>% 
@@ -101,18 +96,16 @@
                nrow = 1) +
     scale_fill_identity() +
     scale_color_identity() +
-    # geom_text(aes(label = df_viz$funding_agency,
-    #               family = "Source Sans Pro",
-    #               size = 10/.pt) +
-    # facet_wrap(~funding_agency, nrow = 3) +
-    #si_style_nogrid() +
     scale_y_continuous(labels = percent, limits = c(.9, 1)) +
     geom_text(aes(label = percent(linkage_in_percent)), color = "white",
               family = "Source Sans Pro",
               size = 12/.pt) +
     expand_limits(y = .2) +
     si_style_ygrid() +
-    labs(x = NULL, y = NULL) 
+   labs(x = NULL, y = NULL,
+        title = "Contact tracing and ICT has resulted in a 98.2% linkage rate across LIPs" %>% toupper(),
+        # subtitle = "subtitle",
+        caption = "Source: ")
  
  v2 / v1
   
@@ -122,7 +115,7 @@
   
   nudge_space  <-  0.25
   
-  df_trace %>% 
+  v3 <- df_trace %>% 
     filter(!str_detect(quarter, "FY21")) %>% 
     mutate(percent_reengagment_from_traced_located = percent_reengagment_from_traced_located/100) %>% 
     rename(period = quarter,
@@ -134,34 +127,27 @@
              position = position_nudge(x = nudge_space)) + 
     geom_col(aes(y = re_engaged), fill = "#002A6C", width = 0.5, 
              position = position_nudge(x = nudge_space*2)) + 
-    # facet_wrap(~fct_reorder(prime_li_ps, number_positive_identified, sum, na.rm = TRUE,.desc = TRUE),
-    #            nrow = 1) +
-    #facet_wrap(~prime_li_ps, nrow = 2) +
     si_style_ygrid() +
-    # geom_text(aes(y = number_positive_linked, label = percent(linkage_in_percent, 1)),
-    #           size = 12/.pt, family = "Source Sans Pro SemiBold", vjust = -0.5, hjust = -0.5) +
     geom_text(aes(y = line_list_received,
-                  label = line_list_received), size = 12/.pt, hjust = 0, 
+                  label = line_list_received), size = 12/.pt, hjust = 0.4,
+              vjust = -0.5, 
               family = "Source Sans Pro Light") +
     geom_text(aes(y = traced_located,
-                  label = traced_located), size = 12/.pt, hjust = 0,
+                  label = traced_located), size = 12/.pt, hjust = 0.4,
+              vjust = -0.5,
               position = position_nudge(x = nudge_space),
               family = "Source Sans Pro Light") +
     geom_text(aes(y = re_engaged,
                   label = re_engaged), size = 12/.pt, hjust = 0,
+              vjust = -0.5,
               position = position_nudge(x = nudge_space*2),
               family = "Source Sans Pro Light") +
     scale_y_continuous(label = label_number(scale_cut = cut_short_scale())) +
-    #theme(strip.text = element_blank()) +
-    # coord_cartesian(expand = F) +
-    labs(x = NULL, y = NULL,
-         title = "Community tracing of clients has improved from FY22 to FY23Q2, with more clients re-engaging into care" %>% toupper(),
-         # subtitle = "subtitle",
-         caption = "Source: ")
+    labs(x = NULL, y = NULL)
   
-  si_save(glue("Graphics/02_bar_{metadata$curr_pd}.svg"))
+  #si_save(glue("Graphics/02_bar_{metadata$curr_pd}.svg"))
 
-  df_trace %>% 
+  v4 <- df_trace %>% 
     filter(!str_detect(quarter, "FY21")) %>% 
     mutate(percent_reengagment_from_traced_located = percent_reengagment_from_traced_located/100,
            pct_rtt_line_list = re_engaged / line_list_received) %>% 
@@ -190,8 +176,14 @@
     scale_color_identity() +
     expand_limits(y = .2) +
     si_style_ygrid() +
-    labs(x = NULL, y = NULL)
+    labs(x = NULL, y = NULL,
+         title = "Community tracing of clients has improved from FY22 to FY23Q2, with more clients re-engaging into care" %>% toupper(),
+         # subtitle = "subtitle",
+         caption = "Source: ")
+
     
+  v4 / v3
+  
   si_save(glue("Graphics/02_traced_rtt_{metadata$curr_pd}.svg"))
   
     
