@@ -45,6 +45,7 @@
 # IMPORT ------------------------------------------------------------------
 
   #data are extracted from the excel visuals that the team sends
+    # extracted and added to a new sheet in a tidy format - NOT an ideal workflow as of now
   
   df_linkage <- data_folder %>% 
     return_latest("FY23Q2_linkage_ICT_data") %>% 
